@@ -1,0 +1,119 @@
+// schema.prisma
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum UserRole {
+  SUPER_ADMIN 
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  DELIVERED
+  CANCELLED
+}
+
+enum AvailabilityStatus {
+  HIGH
+  MODERATE
+  LOW
+}
+
+model User {
+  user_id       String   @id @default(uuid())
+  user_name     String
+  user_email    String   @unique
+  user_phone    String?  @unique
+  user_password String
+  user_role     UserRole @default(ADMIN)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  customers Customer[]
+  @@map("users")
+}
+
+model Customer {
+  customer_id      String    @id @default(uuid())
+  user_id          String
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  customer_name    String
+  customer_email   String    @unique
+  customer_phone   String?   @unique
+  customer_address String?
+  orders           Order[]   @relation("CustomerOrders")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("customers")
+}
+
+model Garment {
+  garment_id   String       @id @default(uuid())
+  garment_name String
+  services     Service[]
+  orderItems   OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("garments")
+}
+
+model Service {
+  service_id   String @id @default(uuid())
+  garment_id   String
+  service_name String
+
+  garment Garment @relation(fields: [garment_id], references: [garment_id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("services")
+  @@index([garment_id])
+}
+
+model Order {
+  order_id            String            @id @default(uuid())
+  customer_id         String
+  availability_status AvailabilityStatus @default(MODERATE)
+  return_expected_by  DateTime?
+  quantity      Int          @default(1)
+  status              OrderStatus        @default(PENDING)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  customer Customer    @relation("CustomerOrders", fields: [customer_id], references: [customer_id], onDelete: Cascade)
+  items    OrderItem[] @relation("OrderOrderItems")
+
+  @@map("orders")
+  @@index([customer_id])
+}
+
+model OrderItem {
+  order_item_id String       @id @default(uuid())
+  order_id      String
+  garment_id    String
+  quantity      Int          @default(1)
+  status        OrderStatus  @default(PENDING)
+
+  order   Order   @relation("OrderOrderItems", fields: [order_id], references: [order_id], onDelete: Cascade)
+  garment Garment @relation(fields: [garment_id], references: [garment_id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("order_items")
+  @@index([order_id])
+  @@index([garment_id])
+}
