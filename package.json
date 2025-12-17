@@ -1,31 +1,36 @@
 {
-  "name": "sourav-backend",
+  "name": "sourav-bakcend",
   "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "type": "module",
-  "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "prisma:generate": "prisma generate"
+    "build": "tsup",
+    "start": "node dist/index.cjs"
   },
-  "dependencies": {
-    "@prisma/client": "^7.1.0",
-    "@prisma/adapter-mariadb": "^7.1.0",
-    "bcryptjs": "^3.0.3",
-    "common-microservices-utils": "^1.2.1",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "jsonwebtoken": "^9.0.3"
-  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/lodash": "^4.17.21",
-    "@types/node": "^20.x",
+    "@types/node": "^25.0.2",
     "@types/pg": "^8.16.0",
     "prisma": "^7.1.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@prisma/adapter-mariadb": "^7.1.0",
+    "@prisma/client": "^7.1.0",
+    "bcryptjs": "^3.0.3",
+    "common-microservices-utils": "^1.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "jsonwebtoken": "^9.0.3"
   }
 }
