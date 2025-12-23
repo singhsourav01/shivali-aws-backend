@@ -5,6 +5,10 @@ import { API_RESPONSES } from "../constants/app.constant";
 import UserService from "../services/user.service";
 import { signupBodyPick } from "../constants/body.contant";
 import _ from "lodash";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../utils/jwt";
 
 class UserController {
   userService: UserService;
@@ -14,6 +18,7 @@ class UserController {
 
   create = asyncHandler(async (req: Request, res: Response) => {
     const data = _.pick(req.body, signupBodyPick);
+    console.log("data", data);
     const user = await this.userService.create({
       user_name: data.user_name,
       user_phone: data.user_phone,
@@ -28,15 +33,31 @@ class UserController {
       .json(new ApiResponse(StatusCodes.OK, user, API_RESPONSES.USER_CREATED));
   });
 
- login = asyncHandler(async (req: Request, res: Response) => {
-    const {user_value, user_password} = req.body;
-    const user = await this.userService.login( user_value, user_password);
+login = asyncHandler(async (req: Request, res: Response) => {
+  const { user_value, user_password } = req.body;
+  console.log("user_value, user_password", user_value, user_password);
+  const user = await this.userService.login(user_value, user_password);
 
-    return res
-      .status(StatusCodes.OK)
-      .json(new ApiResponse(StatusCodes.OK, user, API_RESPONSES.USER_CREATED));
-  });
+const payload = {
+  id: user.user_id,
+  phone: user.user_phone,
+  email: user.user_email,
+  role: user.user_role,
+};
 
+const accessToken = generateAccessToken(payload);
+  return res.status(StatusCodes.OK).json(
+    new ApiResponse(
+      StatusCodes.OK,
+      {
+        user,
+        access_token:accessToken,
+      },
+      // API_RESPONSES.USER_LOGIN_SUCCESS
+      "User logged in successfully"
+    )
+  );
+});
 
   getById = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;

@@ -2,7 +2,6 @@ import { ApiError } from "common-microservices-utils";
 import UserRepository from "../repositories/user.repository";
 import { StatusCodes } from "http-status-codes";
 import { API_ERRORS } from "../constants/app.constant";
-import { signToken } from "../utils/jwt";
 
 class UserService {
   userRepository: UserRepository;
