@@ -1,26 +1,20 @@
 import express from "express";
 import { API_ENDPOINTS } from "../constants/app.constant";
 import OrderItemController from "../controllers/orderItems.controllers";
+import { authenticate } from "../middlewares/auth.middleware";
 
 const orderItemRouter = express.Router();
 const orderItemController = new OrderItemController();
 
 orderItemRouter
   .route(API_ENDPOINTS.ORDER_ITEM)
-  .post(orderItemController.create);
-
-orderItemRouter.route(API_ENDPOINTS.ORDER_ITEM).get(orderItemController.get);
-
-orderItemRouter
-  .route(API_ENDPOINTS.ORDER_BY_ID_ITEM)
-  .get(orderItemController.getById);
+  .post(authenticate, orderItemController.create)
+  .get(authenticate, orderItemController.get);
 
 orderItemRouter
   .route(API_ENDPOINTS.ORDER_BY_ID_ITEM)
-  .delete(orderItemController.delete);
-
-orderItemRouter
-  .route(API_ENDPOINTS.ORDER_BY_ID_ITEM)
-  .put(orderItemController.update);
+  .get(authenticate, orderItemController.getById)
+  .delete(authenticate, orderItemController.delete)
+  .put(authenticate, orderItemController.update);
 
 export default orderItemRouter;

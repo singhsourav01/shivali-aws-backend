@@ -8,7 +8,7 @@ if (!process.env.JWT_SECRET) {
 }
 
 const JWT_EXPIRES_IN: StringValue =
-  (process.env.JWT_EXPIRES_IN as StringValue) || "7d";
+  (process.env.JWT_EXPIRES_IN as StringValue) || 60;
 
 export const signToken = (payload: object): string => {
   const options: SignOptions = {
@@ -16,4 +16,8 @@ export const signToken = (payload: object): string => {
   };
 
   return jwt.sign(payload, JWT_SECRET, options);
+};
+
+export const verifyToken = (token: string) => {
+  return jwt.verify(token, JWT_SECRET);
 };
