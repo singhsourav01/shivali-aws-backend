@@ -5,6 +5,7 @@ import { API_RESPONSES } from "../constants/app.constant";
 import UserService from "../services/user.service";
 import { signupBodyPick } from "../constants/body.contant";
 import _ from "lodash";
+import { signToken } from "../utils/jwt";
 
 class UserController {
   userService: UserService;
@@ -28,16 +29,27 @@ class UserController {
       .json(new ApiResponse(StatusCodes.OK, user, API_RESPONSES.USER_CREATED));
   });
 
- login = asyncHandler(async (req: Request, res: Response) => {
-    const {user_value, user_password} = req.body;
-    const user = await this.userService.login( user_value, user_password);
+  login = asyncHandler(async (req: Request, res: Response) => {
+    const { user_value, user_password } = req.body;
 
-    return res
-      .status(StatusCodes.OK)
-      .json(new ApiResponse(StatusCodes.OK, user, API_RESPONSES.USER_CREATED));
+    const user = await this.userService.login(user_value, user_password);
+
+    const token = signToken({
+      id: user.user_id,
+      role: user.user_role,
+    });
+
+    return res.status(StatusCodes.OK).json(
+      new ApiResponse(
+        StatusCodes.OK,
+        {
+          user,
+          token,
+        },
+        "User logged in successfully"
+      )
+    );
   });
-
-
   getById = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const data = await this.userService.getById(id || "");
