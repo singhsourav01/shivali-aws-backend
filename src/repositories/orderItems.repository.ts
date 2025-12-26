@@ -22,7 +22,11 @@ class OrderItems {
         await prisma.orderItem.findUnique({ where: { order_item_id } })
     );
   };
-
+  getByOrderId = async (order_id: string) => {
+    return queryHandler(
+      async () => await prisma.orderItem.findFirst({ where: { order_id } })
+    );
+  };
   delete = async (order_item_id: string) => {
     return queryHandler(
       async () => await prisma.orderItem.delete({ where: { order_item_id } })

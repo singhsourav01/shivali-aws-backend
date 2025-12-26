@@ -15,6 +15,7 @@ class OrderService {
     return bill;
   };
   update = async (id: string, data: any) => {
+    console.log(id, data, " here is my data");
     const bill = await this.orderRepository.update(id, data);
     return bill;
   };
@@ -72,7 +73,6 @@ class OrderService {
         availability_status: order.availability_status,
         status: order.status,
         quantity: order.quantity,
-
       };
     });
 

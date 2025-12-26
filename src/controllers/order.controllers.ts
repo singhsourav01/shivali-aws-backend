@@ -56,7 +56,6 @@ class OrderController {
       return_expected_by: userData.return_expected_by,
       status: userData.status,
       quantity: userData.quantity,
-
     });
 
     return res

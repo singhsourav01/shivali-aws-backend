@@ -15,7 +15,10 @@ class OrderItemService {
     const bill = await this.orderItemRepository.update(id, data);
     return bill;
   };
-
+  getByOrderId = async (id: string) => {
+    const bill = await this.orderItemRepository.getByOrderId(id);
+    return bill;
+  };
   getById = async (id: string) => {
     const bill = await this.orderItemRepository.getById(id);
     return bill;

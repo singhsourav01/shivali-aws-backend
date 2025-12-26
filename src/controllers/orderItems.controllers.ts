@@ -5,11 +5,15 @@ import { API_RESPONSES } from "../constants/app.constant";
 import OrderItemService from "../services/orderItems.service";
 import { orderItemBodyPick } from "../constants/body.contant";
 import _ from "lodash";
+import OrderService from "../services/order.service";
 
 class UserController {
   orderItemService: OrderItemService;
+  orderService: OrderService;
+
   constructor() {
     this.orderItemService = new OrderItemService();
+    this.orderService = new OrderService();
   }
 
   create = asyncHandler(async (req: Request, res: Response) => {
@@ -49,18 +53,16 @@ class UserController {
       );
   });
   update = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
     const userData = _.pick(req.body, orderItemBodyPick);
-    const data = await this.orderItemService.update(id, {
-      customer_id: userData.customer_id,
-      return_expected_by: userData.return_expected_by,
+    const sourav = await this.orderService.update(userData.order_id, {
       status: userData.status,
     });
+    console.log(sourav, "sourav singh");
 
     return res
       .status(StatusCodes.CREATED)
       .json(
-        new ApiResponse(StatusCodes.CREATED, data, API_RESPONSES.USER_UPDATED)
+        new ApiResponse(StatusCodes.CREATED, sourav, API_RESPONSES.USER_UPDATED)
       );
   });
   get = asyncHandler(async (req: Request, res: Response) => {

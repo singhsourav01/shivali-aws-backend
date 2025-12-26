@@ -9,12 +9,12 @@ const orderItemController = new OrderItemController();
 orderItemRouter
   .route(API_ENDPOINTS.ORDER_ITEM)
   .post(orderItemController.create)
-  .get(orderItemController.get);
+  .get(orderItemController.get)
+  .put(orderItemController.update);
 
 orderItemRouter
   .route(API_ENDPOINTS.ORDER_BY_ID_ITEM)
   .get(orderItemController.getById)
-  .delete(orderItemController.delete)
-  .put(orderItemController.update);
+  .delete(orderItemController.delete);
 
 export default orderItemRouter;

@@ -23,9 +23,9 @@ enum OrderStatus {
 }
 
 enum AvailabilityStatus {
-  HIGH
-  MODERATE
-  LOW
+  MAHA_URGENT
+  URGENT
+  NORMAL
 }
 
 model User {
@@ -46,7 +46,7 @@ model Customer {
   user_id          String
   user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   customer_name    String
-  customer_email   String    @unique
+  customer_email   String?
   customer_phone   String?   @unique
   customer_address String?
   orders           Order[]   @relation("CustomerOrders")
@@ -86,7 +86,7 @@ model Service {
 model Order {
   order_id            String            @id @default(uuid())
   customer_id         String
-  availability_status AvailabilityStatus @default(MODERATE)
+  availability_status AvailabilityStatus @default(NORMAL)
   return_expected_by  DateTime?
   quantity      Int          @default(1)
   status              OrderStatus        @default(PENDING)
