@@ -54,7 +54,7 @@ class UserController {
       customer_name: userData.customer_name,
       customer_phone: userData.customer_phone,
       customer_email: userData.customer_email,
-      customer_address: userData.customer_addr,
+      customer_address: userData.customer_address,
     });
 
     return res

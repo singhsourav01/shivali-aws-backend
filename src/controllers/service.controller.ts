@@ -48,11 +48,7 @@ class UserController {
     const { id } = req.params;
     const userData = _.pick(req.body, servicesBodyPick);
     const data = await this.serviceService.update(id, {
-      name: userData.name,
-      description: userData.description,
-      isActive: userData.isActive,
-      priceType: userData.priceType,
-      basePrice: userData.basePrice,
+      service_name: userData.service_name,
     });
 
     return res

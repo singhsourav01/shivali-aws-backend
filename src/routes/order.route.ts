@@ -1,15 +1,15 @@
 import express from "express";
 import { API_ENDPOINTS } from "../constants/app.constant";
 import OrderController from "../controllers/order.controllers";
-import { authenticate } from "../middlewares/auth.middleware";
+import {} from "../middlewares/auth.middleware";
 
 const orderRouter = express.Router();
 const orderController = new OrderController();
 
 orderRouter
   .route(API_ENDPOINTS.ORDER)
-  .post(authenticate, orderController.create)
-  .get(authenticate, orderController.get);
+  .post(orderController.create)
+  .get(orderController.get);
 
 orderRouter
   .route(API_ENDPOINTS.ORDER_CUSTOMER)
@@ -17,8 +17,8 @@ orderRouter
 
 orderRouter
   .route(API_ENDPOINTS.ORDER_BY_ID)
-  .delete(authenticate, orderController.delete)
-  .get(authenticate, orderController.getById)
-  .put(authenticate, orderController.update);
+  .delete(orderController.delete)
+  .get(orderController.getById)
+  .put(orderController.update);
 
 export default orderRouter;

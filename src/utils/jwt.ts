@@ -1,41 +1,43 @@
-<<<<<<< HEAD
 import jwt, { Secret, SignOptions } from "jsonwebtoken";
 import type { StringValue } from "ms";
 
+/* ---------- ENV VALIDATION ---------- */
 const JWT_SECRET: Secret = process.env.JWT_SECRET!;
+const REFRESH_SECRET: Secret = process.env.JWT_REFRESH_SECRET!;
 
-if (!process.env.JWT_SECRET) {
-  throw new Error("JWT_SECRET is not defined");
+if (!JWT_SECRET) {
+  throw new Error("JWT secrets are not defined");
 }
 
-const JWT_EXPIRES_IN: StringValue =
-  (process.env.JWT_EXPIRES_IN as StringValue) || 60;
+/* ---------- EXPIRY ---------- */
+const ACCESS_EXPIRES_IN: StringValue =
+  (process.env.ACCESS_TOKEN_EXPIRES_IN as StringValue) || "5m";
 
-export const signToken = (payload: object): string => {
+const REFRESH_EXPIRES_IN: StringValue =
+  (process.env.REFRESH_TOKEN_EXPIRES_IN as StringValue) || "7d";
+
+/* ---------- TOKEN GENERATORS ---------- */
+export const generateAccessToken = (payload: object): string => {
   const options: SignOptions = {
-    expiresIn: JWT_EXPIRES_IN,
+    expiresIn: ACCESS_EXPIRES_IN,
   };
 
   return jwt.sign(payload, JWT_SECRET, options);
 };
 
-export const verifyToken = (token: string) => {
-  return jwt.verify(token, JWT_SECRET);
-=======
-import jwt, { Secret } from "jsonwebtoken";
+export const generateRefreshToken = (payload: object): string => {
+  const options: SignOptions = {
+    expiresIn: REFRESH_EXPIRES_IN,
+  };
 
-const ACCESS_SECRET: Secret = process.env.ACCESS_TOKEN_SECRET!;
-const REFRESH_SECRET: Secret = process.env.REFRESH_TOKEN_SECRET!;
-
-export const generateAccessToken = (payload: object): string => {
-  return jwt.sign(payload, ACCESS_SECRET, {
-    expiresIn: Number(process.env.ACCESS_TOKEN_EXPIRES_IN),
-  });
+  return jwt.sign(payload, REFRESH_SECRET, options);
 };
 
-export const generateRefreshToken = (payload: object): string => {
-  return jwt.sign(payload, REFRESH_SECRET, {
-    expiresIn: Number(process.env.REFRESH_TOKEN_EXPIRES_IN),
-  });
->>>>>>> 2acefb3d3bc37fd51ba4dcc7a5f2c09d82b5d0f6
+/* ---------- VERIFIERS ---------- */
+export const verifyAccessToken = (token: string) => {
+  return jwt.verify(token, JWT_SECRET);
+};
+
+export const verifyRefreshToken = (token: string) => {
+  return jwt.verify(token, REFRESH_SECRET);
 };

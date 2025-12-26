@@ -5,14 +5,7 @@ import { API_RESPONSES } from "../constants/app.constant";
 import UserService from "../services/user.service";
 import { signupBodyPick } from "../constants/body.contant";
 import _ from "lodash";
-<<<<<<< HEAD
-import { signToken } from "../utils/jwt";
-=======
-import {
-  generateAccessToken,
-  generateRefreshToken,
-} from "../utils/jwt";
->>>>>>> 2acefb3d3bc37fd51ba4dcc7a5f2c09d82b5d0f6
+import { generateAccessToken } from "../utils/jwt";
 
 class UserController {
   userService: UserService;
@@ -37,56 +30,32 @@ class UserController {
       .json(new ApiResponse(StatusCodes.OK, user, API_RESPONSES.USER_CREATED));
   });
 
-<<<<<<< HEAD
   login = asyncHandler(async (req: Request, res: Response) => {
     const { user_value, user_password } = req.body;
-
+    console.log("user_value, user_password", user_value, user_password);
     const user = await this.userService.login(user_value, user_password);
 
-    const token = signToken({
+    const payload = {
       id: user.user_id,
+      phone: user.user_phone,
+      email: user.user_email,
       role: user.user_role,
-    });
+    };
 
+    const accessToken = generateAccessToken(payload);
     return res.status(StatusCodes.OK).json(
       new ApiResponse(
         StatusCodes.OK,
         {
           user,
-          token,
+          access_token: accessToken,
         },
+        // API_RESPONSES.USER_LOGIN_SUCCESS
         "User logged in successfully"
       )
     );
   });
-=======
-login = asyncHandler(async (req: Request, res: Response) => {
-  const { user_value, user_password } = req.body;
-  console.log("user_value, user_password", user_value, user_password);
-  const user = await this.userService.login(user_value, user_password);
 
-const payload = {
-  id: user.user_id,
-  phone: user.user_phone,
-  email: user.user_email,
-  role: user.user_role,
-};
-
-const accessToken = generateAccessToken(payload);
-  return res.status(StatusCodes.OK).json(
-    new ApiResponse(
-      StatusCodes.OK,
-      {
-        user,
-        access_token:accessToken,
-      },
-      // API_RESPONSES.USER_LOGIN_SUCCESS
-      "User logged in successfully"
-    )
-  );
-});
-
->>>>>>> 2acefb3d3bc37fd51ba4dcc7a5f2c09d82b5d0f6
   getById = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const data = await this.userService.getById(id || "");

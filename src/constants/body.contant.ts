@@ -37,7 +37,7 @@ export const customerBodyPick = [
   "customer_name",
   "customer_phone",
   "customer_email",
-  "customer_addr",
+  "customer_address",
   "user_id",
 ];
 

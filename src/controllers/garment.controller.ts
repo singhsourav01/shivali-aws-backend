@@ -48,9 +48,8 @@ class UserController {
     const { id } = req.params;
     const userData = _.pick(req.body, garmentBodyPick);
     const data = await this.garmentService.update(id, {
-      name: userData.name,
+      garment_name: userData.garment_name,
       description: userData.description,
-      isActive: userData.isActive,
     });
 
     return res
