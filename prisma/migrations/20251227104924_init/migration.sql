@@ -19,13 +19,12 @@ CREATE TABLE `customers` (
     `customer_id` VARCHAR(191) NOT NULL,
     `user_id` VARCHAR(191) NOT NULL,
     `customer_name` VARCHAR(191) NOT NULL,
-    `customer_email` VARCHAR(191) NOT NULL,
+    `customer_email` VARCHAR(191) NULL,
     `customer_phone` VARCHAR(191) NULL,
     `customer_address` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `customers_customer_email_key`(`customer_email`),
     UNIQUE INDEX `customers_customer_phone_key`(`customer_phone`),
     PRIMARY KEY (`customer_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
