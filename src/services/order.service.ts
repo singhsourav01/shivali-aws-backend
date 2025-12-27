@@ -15,7 +15,6 @@ class OrderService {
     return bill;
   };
   update = async (id: string, data: any) => {
-    console.log(id, data, " here is my data");
     const bill = await this.orderRepository.update(id, data);
     return bill;
   };

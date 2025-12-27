@@ -57,7 +57,6 @@ class UserController {
     const sourav = await this.orderService.update(userData.order_id, {
       status: userData.status,
     });
-    console.log(sourav, "sourav singh");
 
     return res
       .status(StatusCodes.CREATED)

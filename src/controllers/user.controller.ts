@@ -15,7 +15,6 @@ class UserController {
 
   create = asyncHandler(async (req: Request, res: Response) => {
     const data = _.pick(req.body, signupBodyPick);
-    console.log("data", data);
     const user = await this.userService.create({
       user_name: data.user_name,
       user_phone: data.user_phone,
@@ -32,7 +31,6 @@ class UserController {
 
   login = asyncHandler(async (req: Request, res: Response) => {
     const { user_value, user_password } = req.body;
-    console.log("user_value, user_password", user_value, user_password);
     const user = await this.userService.login(user_value, user_password);
 
     const payload = {
