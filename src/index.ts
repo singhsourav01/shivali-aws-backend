@@ -10,6 +10,7 @@ import garmentRouter from "./routes/garment.route";
 import serviceRouter from "./routes/service.route";
 import orderRouter from "./routes/order.route";
 import orderItemRouter from "./routes/orderItems.route";
+import dashboardRouter from "./routes/dashboard.route";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use("/garment", garmentRouter);
 app.use("/service", serviceRouter);
 app.use("/order", orderRouter);
 app.use("/order-item", orderItemRouter);
+app.use("/dashboard", dashboardRouter);
 
 /** Error handler — MUST be last */
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

@@ -25,6 +25,7 @@ export const API_ENDPOINTS = {
   SERVICE_BY_ID: "/service/:id",
   SERVICE_GARMENT_ITEM: "/service-garment-item",
   SERVICE_GARMENT_ITEM_BY_ID: "/service-garment-item/:id",
+  DASHBOARD: "/dashboard",
 };
 
 export const API_RESPONSES = {
