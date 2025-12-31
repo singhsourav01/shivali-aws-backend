@@ -44,6 +44,7 @@ export const API_ERRORS = {
   USER_EXISTS: "Users already exists",
   SEND_PROPER_JSON: "Send proper json",
   PHONE_EMAIL_EXISTS: "Phone and email already exists",
+  CUSTOMER_NAME_EXISTS: "Customer name already exists",
   EMAIL_EXISTS: "Email already exists",
   PHONE_EXISTS: "Phone already exists",
   USER_DOSE_NOT_EXISTS: "User dose not exists",

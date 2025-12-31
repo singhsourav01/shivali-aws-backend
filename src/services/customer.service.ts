@@ -1,4 +1,7 @@
+import { ApiError } from "common-microservices-utils";
 import CustomerRepository from "../repositories/customer.repository";
+import { StatusCodes } from "http-status-codes";
+import { API_ERRORS } from "../constants/app.constant";
 
 class CustomerService {
   customerRepository: CustomerRepository;
@@ -8,6 +11,17 @@ class CustomerService {
   }
 
   create = async (data: any) => {
+    const checkNameExist = await this.customerRepository.getByName(
+      data.customer_name || ""
+    );
+
+    if (!checkNameExist) {
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        API_ERRORS.CUSTOMER_NAME_EXISTS
+      );
+    }
+
     const customer = await this.customerRepository.create(data);
     return customer;
   };

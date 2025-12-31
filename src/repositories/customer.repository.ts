@@ -21,6 +21,11 @@ class Customer {
       async () => await prisma.customer.findUnique({ where: { customer_id } })
     );
   };
+  getByName = async (customer_name: string) => {
+    return queryHandler(
+      async () => await prisma.customer.findFirst({ where: { customer_name } })
+    );
+  };
 
   delete = async (customer_id: string) => {
     return queryHandler(
