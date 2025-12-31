@@ -15,7 +15,7 @@ class CustomerService {
       data.customer_name || ""
     );
 
-    if (!checkNameExist) {
+    if (checkNameExist) {
       throw new ApiError(
         StatusCodes.BAD_REQUEST,
         API_ERRORS.CUSTOMER_NAME_EXISTS
