@@ -12,6 +12,10 @@ orderRouter
   .get(orderController.get);
 
 orderRouter
+  .route(API_ENDPOINTS.TODAY_ORDER)
+  .get(orderController.getTodayOrders);
+
+orderRouter
   .route(API_ENDPOINTS.ORDER_CUSTOMER)
   .get(orderController.getByCustomerId);
 

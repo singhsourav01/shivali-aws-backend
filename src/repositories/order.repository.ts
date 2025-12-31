@@ -48,6 +48,19 @@ class Bill {
         })
     );
   };
+  getTodayOrders = async (start: Date, end: Date) => {
+    return prisma.order.findMany({
+      where: {
+        createdAt: {
+          gte: start,
+          lt: end,
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  };
 }
 
 export default Bill;

@@ -83,6 +83,16 @@ class OrderController {
         new ApiResponse(StatusCodes.OK, result, API_RESPONSES.USERS_FETCHED)
       );
   });
+  getTodayOrders = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await this.orderService.getTodayOrders();
+
+    return res
+      .status(StatusCodes.OK)
+      .json(
+        new ApiResponse(StatusCodes.OK, result, API_RESPONSES.USERS_FETCHED)
+      );
+  });
 }
 
 export default OrderController;
