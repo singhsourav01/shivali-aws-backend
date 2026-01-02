@@ -84,8 +84,9 @@ class OrderController {
       );
   });
   getTodayOrders = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const result = await this.orderService.getTodayOrders();
+    const { date } = req.query;
+
+    const result = await this.orderService.getTodayOrders(date);
 
     return res
       .status(StatusCodes.OK)

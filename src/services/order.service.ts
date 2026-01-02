@@ -77,8 +77,10 @@ class OrderService {
 
     return result;
   };
-  getTodayOrders = async () => {
-    const start = new Date();
+  getTodayOrders = async (date: any) => {
+    const selectedDate = date ? new Date(date) : new Date();
+
+    const start = new Date(selectedDate);
     start.setHours(0, 0, 0, 0);
 
     const end = new Date(start);
