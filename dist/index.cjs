@@ -42026,7 +42026,7 @@ var Bill = class {
     );
   };
   getTodayOrders = async (start, end) => {
-    return prisma.order.findMany({
+    const orders = await prisma.order.findMany({
       where: {
         createdAt: {
           gte: start,
@@ -42035,6 +42035,70 @@ var Bill = class {
       },
       orderBy: {
         createdAt: "desc"
+      },
+      select: {
+        order_id: true,
+        availability_status: true,
+        return_expected_by: true,
+        status: true,
+        createdAt: true,
+        customer: {
+          select: {
+            customer_name: true,
+            customer_phone: true
+          }
+        },
+        items: {
+          select: {
+            quantity: true,
+            garment: {
+              select: {
+                garment_name: true
+              }
+            }
+          }
+        }
+      }
+    });
+    return orders.map((order) => {
+      const garments = {};
+      order.items.forEach((item) => {
+        const name = item.garment.garment_name;
+        garments[name] = (garments[name] || 0) + item.quantity;
+      });
+      return {
+        order_id: order.order_id,
+        customer_name: order.customer.customer_name,
+        customer_phone: order.customer.customer_phone,
+        availability_status: order.availability_status,
+        return_expected_by: order.return_expected_by,
+        status: order.status,
+        order_created: order.createdAt,
+        selected_garments: garments
+      };
+    });
+  };
+  getOrderDetail = async (order_id) => {
+    return prisma.order.findUnique({
+      where: { order_id },
+      select: {
+        return_expected_by: true,
+        createdAt: true,
+        customer: {
+          select: {
+            customer_name: true
+          }
+        },
+        items: {
+          select: {
+            quantity: true,
+            garment: {
+              select: {
+                garment_name: true
+              }
+            }
+          }
+        }
       }
     });
   };
@@ -42106,29 +42170,17 @@ var OrderService = class {
     });
     return result;
   };
-  getTodayOrders = async () => {
-    const start = /* @__PURE__ */ new Date();
+  getTodayOrders = async (date) => {
+    const selectedDate = date ? new Date(date) : /* @__PURE__ */ new Date();
+    const start = new Date(selectedDate);
     start.setHours(0, 0, 0, 0);
     const end = new Date(start);
     end.setDate(start.getDate() + 1);
-    const orders = await this.orderRepository.getTodayOrders(start, end);
-    const customers = await Promise.all(
-      orders.map((o) => this.customerRepository.getById(o.customer_id))
-    );
-    return orders.map((order, index) => {
-      const customer = customers[index];
-      return {
-        order_id: order.order_id,
-        customer_id: order.customer_id,
-        customer_name: customer?.customer_name,
-        customer_phone: customer?.customer_phone,
-        quantity: order.quantity,
-        availability_status: order.availability_status,
-        return_expected_by: order.return_expected_by,
-        status: order.status,
-        order_created: order.createdAt
-      };
-    });
+    return this.orderRepository.getTodayOrders(start, end);
+  };
+  getOrderDetails = async (order_id) => {
+    const bill = await this.orderRepository.getOrderDetail(order_id);
+    return bill;
   };
 };
 var order_service_default = OrderService;
@@ -42192,8 +42244,8 @@ var OrderController = class {
     );
   });
   getTodayOrders = (0, import_common_microservices_utils8.asyncHandler)(async (req, res) => {
-    const { id } = req.params;
-    const result = await this.orderService.getTodayOrders();
+    const { date } = req.query;
+    const result = await this.orderService.getTodayOrders(date);
     return res.status(StatusCodes.OK).json(
       new import_common_microservices_utils8.ApiResponse(StatusCodes.OK, result, API_RESPONSES.USERS_FETCHED)
     );

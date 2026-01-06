@@ -49,7 +49,7 @@ class Bill {
     );
   };
   getTodayOrders = async (start: Date, end: Date) => {
-    return prisma.order.findMany({
+    const orders = await prisma.order.findMany({
       where: {
         createdAt: {
           gte: start,
@@ -58,6 +58,80 @@ class Bill {
       },
       orderBy: {
         createdAt: "desc",
+      },
+      select: {
+        order_id: true,
+        availability_status: true,
+        return_expected_by: true,
+        status: true,
+        createdAt: true,
+        customer: {
+          select: {
+            customer_name: true,
+            customer_phone: true,
+          },
+        },
+        items: {
+          select: {
+            quantity: true,
+            garment: {
+              select: {
+                garment_name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return orders.map((order) => {
+      const selected_garments: Record<string, number> = {};
+      let total = 0;
+
+      order.items.forEach((item) => {
+        const garmentName = item.garment.garment_name;
+
+        selected_garments[garmentName] =
+          (selected_garments[garmentName] || 0) + item.quantity;
+
+        total += item.quantity;
+      });
+
+      return {
+        order_id: order.order_id,
+        customer_name: order.customer.customer_name,
+        customer_phone: order.customer.customer_phone,
+        availability_status: order.availability_status,
+        return_expected_by: order.return_expected_by,
+        status: order.status,
+        order_created: order.createdAt,
+        total,
+        selected_garments,
+      };
+    });
+  };
+
+  getOrderDetail = async (order_id: string) => {
+    return prisma.order.findUnique({
+      where: { order_id: order_id },
+      select: {
+        return_expected_by: true,
+        createdAt: true,
+        customer: {
+          select: {
+            customer_name: true,
+          },
+        },
+        items: {
+          select: {
+            quantity: true,
+            garment: {
+              select: {
+                garment_name: true,
+              },
+            },
+          },
+        },
       },
     });
   };

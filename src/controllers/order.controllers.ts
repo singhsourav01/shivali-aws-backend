@@ -47,6 +47,7 @@ class OrderController {
         new ApiResponse(StatusCodes.CREATED, null, API_RESPONSES.USER_DELETED)
       );
   });
+
   update = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const userData = _.pick(req.body, orderBodyPick);

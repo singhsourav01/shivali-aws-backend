@@ -79,33 +79,18 @@ class OrderService {
   };
   getTodayOrders = async (date: any) => {
     const selectedDate = date ? new Date(date) : new Date();
-
     const start = new Date(selectedDate);
     start.setHours(0, 0, 0, 0);
 
     const end = new Date(start);
     end.setDate(start.getDate() + 1);
 
-    const orders = await this.orderRepository.getTodayOrders(start, end);
+    return this.orderRepository.getTodayOrders(start, end);
+  };
 
-    const customers = await Promise.all(
-      orders.map((o) => this.customerRepository.getById(o.customer_id))
-    );
-
-    return orders.map((order, index) => {
-      const customer = customers[index];
-      return {
-        order_id: order.order_id,
-        customer_id: order.customer_id,
-        customer_name: customer?.customer_name,
-        customer_phone: customer?.customer_phone,
-        quantity: order.quantity,
-        availability_status: order.availability_status,
-        return_expected_by: order.return_expected_by,
-        status: order.status,
-        order_created: order.createdAt,
-      };
-    });
+  getOrderDetails = async (order_id: string) => {
+    const bill = await this.orderRepository.getOrderDetail(order_id);
+    return bill;
   };
 }
 
