@@ -35252,6 +35252,7 @@ var require_prisma = __commonJS({
     };
     exports2.Prisma.CustomerScalarFieldEnum = {
       customer_id: "customer_id",
+      customer_unique_id: "customer_unique_id",
       user_id: "user_id",
       customer_name: "customer_name",
       customer_email: "customer_email",
@@ -35259,6 +35260,9 @@ var require_prisma = __commonJS({
       customer_address: "customer_address",
       createdAt: "createdAt",
       updatedAt: "updatedAt"
+    };
+    exports2.Prisma.CustomerSequenceScalarFieldEnum = {
+      id: "id"
     };
     exports2.Prisma.GarmentScalarFieldEnum = {
       garment_id: "garment_id",
@@ -35309,6 +35313,7 @@ var require_prisma = __commonJS({
     };
     exports2.Prisma.CustomerOrderByRelevanceFieldEnum = {
       customer_id: "customer_id",
+      customer_unique_id: "customer_unique_id",
       user_id: "user_id",
       customer_name: "customer_name",
       customer_email: "customer_email",
@@ -35352,6 +35357,7 @@ var require_prisma = __commonJS({
     exports2.Prisma.ModelName = {
       User: "User",
       Customer: "Customer",
+      CustomerSequence: "CustomerSequence",
       Garment: "Garment",
       Service: "Service",
       Order: "Order",
@@ -35362,9 +35368,9 @@ var require_prisma = __commonJS({
       "clientVersion": "7.1.0",
       "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
       "activeProvider": "mysql",
-      "inlineSchema": '// schema.prisma\ngenerator client {\n  provider = "prisma-client-js"\n  output   = "../generated/prisma"\n}\n\ndatasource db {\n  provider = "mysql"\n}\n\nenum UserRole {\n  SUPER_ADMIN\n  ADMIN\n}\n\nenum OrderStatus {\n  PENDING\n  IN_PROGRESS\n  COMPLETED\n  DELIVERED\n  CANCELLED\n}\n\nenum AvailabilityStatus {\n  MAHA_URGENT\n  URGENT\n  NORMAL\n}\n\nmodel User {\n  user_id       String     @id @default(uuid())\n  user_name     String\n  user_email    String     @unique\n  user_phone    String?    @unique\n  user_password String\n  user_role     UserRole   @default(ADMIN)\n  createdAt     DateTime   @default(now())\n  updatedAt     DateTime   @updatedAt\n  customers     Customer[]\n\n  @@map("users")\n}\n\nmodel Customer {\n  customer_id      String  @id @default(uuid())\n  user_id          String\n  user             User    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)\n  customer_name    String\n  customer_email   String?\n  customer_phone   String? @unique\n  customer_address String?\n  orders           Order[] @relation("CustomerOrders")\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map("customers")\n}\n\nmodel Garment {\n  garment_id   String      @id @default(uuid())\n  garment_name String\n  services     Service[]\n  orderItems   OrderItem[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map("garments")\n}\n\nmodel Service {\n  service_id   String @id @default(uuid())\n  garment_id   String\n  service_name String\n\n  garment Garment @relation(fields: [garment_id], references: [garment_id], onDelete: Cascade)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([garment_id])\n  @@map("services")\n}\n\nmodel Order {\n  order_id            String             @id @default(uuid())\n  customer_id         String\n  availability_status AvailabilityStatus @default(NORMAL)\n  return_expected_by  DateTime?\n  quantity            Int                @default(1)\n  status              OrderStatus        @default(PENDING)\n  createdAt           DateTime           @default(now())\n  updatedAt           DateTime           @updatedAt\n\n  customer Customer    @relation("CustomerOrders", fields: [customer_id], references: [customer_id], onDelete: Cascade)\n  items    OrderItem[] @relation("OrderOrderItems")\n\n  @@index([customer_id])\n  @@map("orders")\n}\n\nmodel OrderItem {\n  order_item_id String      @id @default(uuid())\n  order_id      String\n  garment_id    String\n  quantity      Int         @default(1)\n  status        OrderStatus @default(PENDING)\n\n  order   Order   @relation("OrderOrderItems", fields: [order_id], references: [order_id], onDelete: Cascade)\n  garment Garment @relation(fields: [garment_id], references: [garment_id], onDelete: Restrict)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([order_id])\n  @@index([garment_id])\n  @@map("order_items")\n}\n'
+      "inlineSchema": '// schema.prisma\ngenerator client {\n  provider = "prisma-client-js"\n  output   = "../generated/prisma"\n}\n\ndatasource db {\n  provider = "mysql"\n}\n\nenum UserRole {\n  SUPER_ADMIN\n  ADMIN\n}\n\nenum OrderStatus {\n  PENDING\n  IN_PROGRESS\n  COMPLETED\n  DELIVERED\n  CANCELLED\n}\n\nenum AvailabilityStatus {\n  MAHA_URGENT\n  URGENT\n  NORMAL\n}\n\nmodel User {\n  user_id       String     @id @default(uuid())\n  user_name     String\n  user_email    String     @unique\n  user_phone    String?    @unique\n  user_password String\n  user_role     UserRole   @default(ADMIN)\n  createdAt     DateTime   @default(now())\n  updatedAt     DateTime   @updatedAt\n  customers     Customer[]\n\n  @@map("users")\n}\n\nmodel Customer {\n  customer_id        String  @id @default(uuid())\n  customer_unique_id String? @unique\n  user_id            String\n  user               User    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)\n  customer_name      String\n  customer_email     String?\n  customer_phone     String? @unique\n  customer_address   String?\n  orders             Order[] @relation("CustomerOrders")\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map("customers")\n}\n\nmodel CustomerSequence {\n  id Int @id @default(autoincrement())\n}\n\nmodel Garment {\n  garment_id   String      @id @default(uuid())\n  garment_name String\n  services     Service[]\n  orderItems   OrderItem[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map("garments")\n}\n\nmodel Service {\n  service_id   String @id @default(uuid())\n  garment_id   String\n  service_name String\n\n  garment Garment @relation(fields: [garment_id], references: [garment_id], onDelete: Cascade)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([garment_id])\n  @@map("services")\n}\n\nmodel Order {\n  order_id            String             @id @default(uuid())\n  customer_id         String\n  availability_status AvailabilityStatus @default(NORMAL)\n  return_expected_by  DateTime?\n  quantity            Int                @default(1)\n  status              OrderStatus        @default(PENDING)\n  createdAt           DateTime           @default(now())\n  updatedAt           DateTime           @updatedAt\n\n  customer Customer    @relation("CustomerOrders", fields: [customer_id], references: [customer_id], onDelete: Cascade)\n  items    OrderItem[] @relation("OrderOrderItems")\n\n  @@index([customer_id])\n  @@map("orders")\n}\n\nmodel OrderItem {\n  order_item_id String      @id @default(uuid())\n  order_id      String\n  garment_id    String\n  quantity      Int         @default(1)\n  status        OrderStatus @default(PENDING)\n\n  order   Order   @relation("OrderOrderItems", fields: [order_id], references: [order_id], onDelete: Cascade)\n  garment Garment @relation(fields: [garment_id], references: [garment_id], onDelete: Restrict)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([order_id])\n  @@index([garment_id])\n  @@map("order_items")\n}\n'
     };
-    config.runtimeDataModel = JSON.parse('{"models":{"User":{"fields":[{"name":"user_id","kind":"scalar","type":"String"},{"name":"user_name","kind":"scalar","type":"String"},{"name":"user_email","kind":"scalar","type":"String"},{"name":"user_phone","kind":"scalar","type":"String"},{"name":"user_password","kind":"scalar","type":"String"},{"name":"user_role","kind":"enum","type":"UserRole"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"customers","kind":"object","type":"Customer","relationName":"CustomerToUser"}],"dbName":"users"},"Customer":{"fields":[{"name":"customer_id","kind":"scalar","type":"String"},{"name":"user_id","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"CustomerToUser"},{"name":"customer_name","kind":"scalar","type":"String"},{"name":"customer_email","kind":"scalar","type":"String"},{"name":"customer_phone","kind":"scalar","type":"String"},{"name":"customer_address","kind":"scalar","type":"String"},{"name":"orders","kind":"object","type":"Order","relationName":"CustomerOrders"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"customers"},"Garment":{"fields":[{"name":"garment_id","kind":"scalar","type":"String"},{"name":"garment_name","kind":"scalar","type":"String"},{"name":"services","kind":"object","type":"Service","relationName":"GarmentToService"},{"name":"orderItems","kind":"object","type":"OrderItem","relationName":"GarmentToOrderItem"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"garments"},"Service":{"fields":[{"name":"service_id","kind":"scalar","type":"String"},{"name":"garment_id","kind":"scalar","type":"String"},{"name":"service_name","kind":"scalar","type":"String"},{"name":"garment","kind":"object","type":"Garment","relationName":"GarmentToService"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"services"},"Order":{"fields":[{"name":"order_id","kind":"scalar","type":"String"},{"name":"customer_id","kind":"scalar","type":"String"},{"name":"availability_status","kind":"enum","type":"AvailabilityStatus"},{"name":"return_expected_by","kind":"scalar","type":"DateTime"},{"name":"quantity","kind":"scalar","type":"Int"},{"name":"status","kind":"enum","type":"OrderStatus"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"customer","kind":"object","type":"Customer","relationName":"CustomerOrders"},{"name":"items","kind":"object","type":"OrderItem","relationName":"OrderOrderItems"}],"dbName":"orders"},"OrderItem":{"fields":[{"name":"order_item_id","kind":"scalar","type":"String"},{"name":"order_id","kind":"scalar","type":"String"},{"name":"garment_id","kind":"scalar","type":"String"},{"name":"quantity","kind":"scalar","type":"Int"},{"name":"status","kind":"enum","type":"OrderStatus"},{"name":"order","kind":"object","type":"Order","relationName":"OrderOrderItems"},{"name":"garment","kind":"object","type":"Garment","relationName":"GarmentToOrderItem"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"order_items"}},"enums":{},"types":{}}');
+    config.runtimeDataModel = JSON.parse('{"models":{"User":{"fields":[{"name":"user_id","kind":"scalar","type":"String"},{"name":"user_name","kind":"scalar","type":"String"},{"name":"user_email","kind":"scalar","type":"String"},{"name":"user_phone","kind":"scalar","type":"String"},{"name":"user_password","kind":"scalar","type":"String"},{"name":"user_role","kind":"enum","type":"UserRole"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"customers","kind":"object","type":"Customer","relationName":"CustomerToUser"}],"dbName":"users"},"Customer":{"fields":[{"name":"customer_id","kind":"scalar","type":"String"},{"name":"customer_unique_id","kind":"scalar","type":"String"},{"name":"user_id","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"CustomerToUser"},{"name":"customer_name","kind":"scalar","type":"String"},{"name":"customer_email","kind":"scalar","type":"String"},{"name":"customer_phone","kind":"scalar","type":"String"},{"name":"customer_address","kind":"scalar","type":"String"},{"name":"orders","kind":"object","type":"Order","relationName":"CustomerOrders"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"customers"},"CustomerSequence":{"fields":[{"name":"id","kind":"scalar","type":"Int"}],"dbName":null},"Garment":{"fields":[{"name":"garment_id","kind":"scalar","type":"String"},{"name":"garment_name","kind":"scalar","type":"String"},{"name":"services","kind":"object","type":"Service","relationName":"GarmentToService"},{"name":"orderItems","kind":"object","type":"OrderItem","relationName":"GarmentToOrderItem"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"garments"},"Service":{"fields":[{"name":"service_id","kind":"scalar","type":"String"},{"name":"garment_id","kind":"scalar","type":"String"},{"name":"service_name","kind":"scalar","type":"String"},{"name":"garment","kind":"object","type":"Garment","relationName":"GarmentToService"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"services"},"Order":{"fields":[{"name":"order_id","kind":"scalar","type":"String"},{"name":"customer_id","kind":"scalar","type":"String"},{"name":"availability_status","kind":"enum","type":"AvailabilityStatus"},{"name":"return_expected_by","kind":"scalar","type":"DateTime"},{"name":"quantity","kind":"scalar","type":"Int"},{"name":"status","kind":"enum","type":"OrderStatus"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"customer","kind":"object","type":"Customer","relationName":"CustomerOrders"},{"name":"items","kind":"object","type":"OrderItem","relationName":"OrderOrderItems"}],"dbName":"orders"},"OrderItem":{"fields":[{"name":"order_item_id","kind":"scalar","type":"String"},{"name":"order_id","kind":"scalar","type":"String"},{"name":"garment_id","kind":"scalar","type":"String"},{"name":"quantity","kind":"scalar","type":"Int"},{"name":"status","kind":"enum","type":"OrderStatus"},{"name":"order","kind":"object","type":"Order","relationName":"OrderOrderItems"},{"name":"garment","kind":"object","type":"Garment","relationName":"GarmentToOrderItem"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"order_items"}},"enums":{},"types":{}}');
     defineDmmfProperty2(exports2.Prisma, config.runtimeDataModel);
     config.compilerWasm = {
       getRuntime: async () => require_query_compiler_bg(),
@@ -41581,7 +41587,20 @@ var import_common_microservices_utils4 = require("common-microservices-utils");
 // src/repositories/customer.repository.ts
 var Customer = class {
   create = async (data) => {
-    return queryHandler(async () => await prisma.customer.create({ data }));
+    return queryHandler(async () => {
+      return prisma.$transaction(async (tx) => {
+        const seq = await tx.customerSequence.create({
+          data: {}
+        });
+        const customerUid = `CU_${seq.id}`;
+        return tx.customer.create({
+          data: {
+            ...data,
+            customer_unique_id: customerUid
+          }
+        });
+      });
+    });
   };
   update = async (customer_id, data) => {
     return queryHandler(
@@ -42061,10 +42080,12 @@ var Bill = class {
       }
     });
     return orders.map((order) => {
-      const garments = {};
+      const selected_garments = {};
+      let total = 0;
       order.items.forEach((item) => {
-        const name = item.garment.garment_name;
-        garments[name] = (garments[name] || 0) + item.quantity;
+        const garmentName = item.garment.garment_name;
+        selected_garments[garmentName] = (selected_garments[garmentName] || 0) + item.quantity;
+        total += item.quantity;
       });
       return {
         order_id: order.order_id,
@@ -42074,7 +42095,8 @@ var Bill = class {
         return_expected_by: order.return_expected_by,
         status: order.status,
         order_created: order.createdAt,
-        selected_garments: garments
+        total,
+        selected_garments
       };
     });
   };
