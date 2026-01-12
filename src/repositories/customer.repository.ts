@@ -2,9 +2,25 @@ import { prisma } from "../configs/db.config";
 import { queryHandler } from "../utils/helper";
 
 class Customer {
-  create = async (data: any) => {
-    return queryHandler(async () => await prisma.customer.create({ data }));
-  };
+create = async (data: any) => {
+  return queryHandler(async () => {
+    return prisma.$transaction(async (tx) => {
+      const seq = await tx.customerSequence.create({
+        data: {},
+      });
+
+      const customerUid = `CU_${seq.id}`;
+
+      return tx.customer.create({
+        data: {
+          ...data,
+          customer_unique_id: customerUid,
+        },
+      });
+    });
+  });
+};
+
 
   update = async (customer_id: string, data: any) => {
     return queryHandler(
