@@ -9,12 +9,11 @@ create = async (data: any) => {
         data: {},
       });
 
-      const customerUid = `CU_${seq.id}`;
-
       return tx.customer.create({
         data: {
           ...data,
-          customer_unique_id: customerUid,
+          user_id: data.user_id,
+          customer_unique_id: `CU_${seq.id}`,
         },
       });
     });

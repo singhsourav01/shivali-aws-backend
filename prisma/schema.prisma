@@ -93,7 +93,7 @@ model OrderItem {
   @@map("order_items")
 }
 
-model customersequence {
+model CustomerSequence  {
   id Int @id @default(autoincrement())
 }
 
