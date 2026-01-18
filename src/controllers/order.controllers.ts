@@ -95,6 +95,24 @@ class OrderController {
         new ApiResponse(StatusCodes.OK, result, API_RESPONSES.USERS_FETCHED)
       );
   });
+
+  getReturnExpectedOrders = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { date } = req.query;
+
+    const result =
+      await this.orderService.getOrdersByReturnExpectedDate(date);
+
+    return res.status(StatusCodes.OK).json(
+      new ApiResponse(
+        StatusCodes.OK,
+        result,
+        API_RESPONSES.USERS_FETCHED
+      )
+    );
+  }
+);
+
 }
 
 export default OrderController;

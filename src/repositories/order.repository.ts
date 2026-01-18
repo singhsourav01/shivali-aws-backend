@@ -1,3 +1,9 @@
+const availabilityPriority: Record<string, number> = {
+  MAHA_URGENT: 1,
+  URGENT: 2,
+  NORMAL: 3,
+};
+
 import { prisma } from "../configs/db.config";
 import { queryHandler } from "../utils/helper";
 
@@ -14,6 +20,7 @@ class Bill {
           data,
         })
     );
+    
   };
 
   getByorder_Id = async (order_id: string) => {
@@ -84,11 +91,11 @@ class Bill {
       },
     });
 
-    return orders.map((order) => {
+    return orders.map((order: any) => {
       const selected_garments: Record<string, number> = {};
       let total = 0;
 
-      order.items.forEach((item) => {
+      order.items.forEach((item: any) => {
         const garmentName = item.garment.garment_name;
 
         selected_garments[garmentName] =
@@ -110,6 +117,59 @@ class Bill {
       };
     });
   };
+
+  getOrdersByReturnExpectedDate = async (
+  start: Date,
+  end: Date
+) => {
+  const orders = await prisma.order.findMany({
+    where: {
+      return_expected_by: {
+        gte: start,
+        lt: end,
+      },
+    },
+    orderBy: [
+      {
+        availability_status: "asc", // enum order handled manually below
+      },
+      {
+        createdAt: "desc",
+      },
+    ],
+    select: {
+      order_id: true,
+      availability_status: true,
+      return_expected_by: true,
+      status: true,
+      createdAt: true,
+      customer: {
+        select: {
+          customer_name: true,
+          customer_phone: true,
+        },
+      },
+      items: {
+        select: {
+          quantity: true,
+          garment: {
+            select: {
+              garment_name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // Enforce custom availability priority
+  return orders.sort(
+    (a: any, b: any) =>
+      availabilityPriority[a.availability_status] -
+      availabilityPriority[b.availability_status]
+  );
+};
+
 
   getOrderDetail = async (order_id: string) => {
     return prisma.order.findUnique({

@@ -13,6 +13,7 @@ export const API_ENDPOINTS = {
   USER_LOGIN: "/login",
   ORDER: "/order",
   TODAY_ORDER: "/today-order",
+  RETURN_EXPECTED_ORDERS: "/return-expected",
   ORDER_CUSTOMER: "/order/customer/:id",
   ORDER_BY_ID: "/order/:id",
   ORDER_ITEM: "/order-item",
