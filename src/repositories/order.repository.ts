@@ -183,6 +183,7 @@ class Bill {
         customer: {
           select: {
             customer_name: true,
+            customer_unique_id: true,
           },
         },
         items: {
