@@ -120,6 +120,7 @@ class OrderService {
       order_id: order.order_id,
       customer_name: order.customer.customer_name,
       customer_phone: order.customer.customer_phone,
+      customer_unique_id: order.customer_unique_id,
       availability_status: order.availability_status,
       return_expected_by: order.return_expected_by,
       status: order.status,
