@@ -55,7 +55,7 @@ class Bill {
         })
     );
   };
-  getTodayOrders = async (start: Date, end: Date) => {
+  getTodayOrders = async (start: Date, end: Date) => {  
     const orders = await prisma.order.findMany({
       where: {
         createdAt: {
@@ -76,6 +76,7 @@ class Bill {
           select: {
             customer_name: true,
             customer_phone: true,
+            customer_unique_id: true
           },
         },
         items: {

@@ -66,6 +66,11 @@ create = async (data: any) => {
               contains: search,
             },
           },
+          {
+            customer_unique_id: {
+              contains: search,
+            },
+          },
         ],
       },
     });
