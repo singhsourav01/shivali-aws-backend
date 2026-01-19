@@ -149,6 +149,7 @@ class Bill {
         select: {
           customer_name: true,
           customer_phone: true,
+          customer_unique_id: true,
         },
       },
       items: {
