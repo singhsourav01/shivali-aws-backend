@@ -42,6 +42,12 @@ create = async (data: any) => {
     );
   };
 
+   getByPhone = async (customer_phone: string) => {
+    return queryHandler(
+      async () => await prisma.customer.findUnique({ where: { customer_phone } })
+    );
+  };
+
   delete = async (customer_id: string) => {
     return queryHandler(
       async () => await prisma.customer.delete({ where: { customer_id } })

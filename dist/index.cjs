@@ -41622,6 +41622,11 @@ var Customer = class {
       async () => await prisma.customer.findFirst({ where: { customer_name } })
     );
   };
+  getByPhone = async (customer_phone) => {
+    return queryHandler(
+      async () => await prisma.customer.findUnique({ where: { customer_phone } })
+    );
+  };
   delete = async (customer_id) => {
     return queryHandler(
       async () => await prisma.customer.delete({ where: { customer_id } })
@@ -41661,8 +41666,8 @@ var CustomerService = class {
     const checkNameExist = await this.customerRepository.getByName(
       data.customer_name || ""
     );
-    const checkPhoneExist = await this.customerRepository.getByNameOrPhone(
-      data.customer_phone || ""
+    const checkPhoneExist = await this.customerRepository.getByPhone(
+      data.customer_phone
     );
     if (checkNameExist && checkPhoneExist) {
       throw new import_common_microservices_utils4.ApiError(

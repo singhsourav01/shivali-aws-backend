@@ -14,8 +14,8 @@ class CustomerService {
     const checkNameExist = await this.customerRepository.getByName(
       data.customer_name || ""
     );
-        const checkPhoneExist = await this.customerRepository.getByNameOrPhone(
-      data.customer_phone || ""
+        const checkPhoneExist = await this.customerRepository.getByPhone(
+      data.customer_phone
     );
 
     if(checkNameExist && checkPhoneExist){
