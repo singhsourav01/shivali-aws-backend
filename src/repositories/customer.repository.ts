@@ -5,16 +5,20 @@ class Customer {
 create = async (data: any) => {
   return queryHandler(async () => {
     return prisma.$transaction(async (tx) => {
+      const seq = await tx.customerSequence.create({
+        data: {},
+      });
+
       return tx.customer.create({
         data: {
           ...data,
           user_id: data.user_id,
+          customer_unique_id: `CU_${seq.id}`,
         },
       });
     });
   });
 };
-
 
   update = async (customer_id: string, data: any) => {
     return queryHandler(
