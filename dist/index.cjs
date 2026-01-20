@@ -41706,8 +41706,8 @@ var UserController2 = class {
       customer_name: data.customer_name,
       customer_phone: data.customer_phone,
       customer_email: data.customer_email,
-      user_id: "076cc9c0-0279-4475-aba2-1f60c6f5201c",
-      customer_address: data.customer_addr
+      user_id: "56bf5494-a286-4bbe-9d33-fdc0dceadd1c",
+      customer_address: data.customer_address
     });
     return res.status(StatusCodes.OK).json(new import_common_microservices_utils5.ApiResponse(StatusCodes.OK, user, API_RESPONSES.USER_CREATED));
   });

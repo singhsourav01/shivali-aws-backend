@@ -19,7 +19,7 @@ class UserController {
       customer_phone: data.customer_phone,
       customer_email: data.customer_email,
       user_id: "56bf5494-a286-4bbe-9d33-fdc0dceadd1c",
-      customer_address: data.customer_addr,
+      customer_address: data.customer_address,
     });
 
     return res
