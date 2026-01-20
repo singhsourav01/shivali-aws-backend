@@ -21,6 +21,8 @@ app.use(cors());
 app.use(express.json());
 
 /** Routes */
+
+
 app.use("/users", userRouter);
 app.use("/customer", customerRouter);
 app.use("/garment", garmentRouter);

@@ -13,7 +13,7 @@ create = async (data: any) => {
         data: {
           ...data,
           user_id: data.user_id,
-          customer_unique_id: `CU_${seq.id}`,
+          customer_seq: seq.id,
         },
       });
     });

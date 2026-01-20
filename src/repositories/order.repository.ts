@@ -76,6 +76,7 @@ class Bill {
           select: {
             customer_name: true,
             customer_phone: true,
+            customer_seq: true,
           },
         },
         items: {
@@ -108,6 +109,7 @@ class Bill {
         order_id: order.order_id,
         customer_name: order.customer.customer_name,
         customer_phone: order.customer.customer_phone,
+        customer_seq: order.customer.customer_seq,
         availability_status: order.availability_status,
         return_expected_by: order.return_expected_by,
         status: order.status,
@@ -147,6 +149,8 @@ class Bill {
         select: {
           customer_name: true,
           customer_phone: true,
+          customer_seq: true,
+
         },
       },
       items: {
