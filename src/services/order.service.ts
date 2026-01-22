@@ -88,20 +88,21 @@ class OrderService {
     return this.orderRepository.getTodayOrders(start, end);
   };
 
-  getOrdersByReturnExpectedDate = async (date: any) => {
+getOrdersByReturnExpectedDate = async (date: any) => {
   const selectedDate = date ? new Date(date) : new Date();
 
-  const start = new Date(selectedDate);
-  start.setHours(0, 0, 0, 0);
+  // Normalize to UTC day boundaries
+  const start = new Date(Date.UTC(
+    selectedDate.getUTCFullYear(),
+    selectedDate.getUTCMonth(),
+    selectedDate.getUTCDate(),
+    0, 0, 0, 0
+  ));
 
   const end = new Date(start);
-  end.setDate(start.getDate() + 1);
+  end.setUTCDate(end.getUTCDate() + 1);
 
-  const orders =
-    await this.orderRepository.getOrdersByReturnExpectedDate(
-      start,
-      end
-    );
+  const orders = await this.orderRepository.getOrdersByReturnExpectedDate(start, end);
 
   return orders.map((order: any) => {
     const selected_garments: Record<string, number> = {};
@@ -109,10 +110,8 @@ class OrderService {
 
     order.items.forEach((item: any) => {
       const garmentName = item.garment.garment_name;
-
       selected_garments[garmentName] =
         (selected_garments[garmentName] || 0) + item.quantity;
-
       total += item.quantity;
     });
 
@@ -120,6 +119,7 @@ class OrderService {
       order_id: order.order_id,
       customer_name: order.customer.customer_name,
       customer_phone: order.customer.customer_phone,
+      customer_seq: order.customer.customer_seq,
       availability_status: order.availability_status,
       return_expected_by: order.return_expected_by,
       status: order.status,
@@ -129,6 +129,7 @@ class OrderService {
     };
   });
 };
+
 
 
   getOrderDetails = async (order_id: string) => {
