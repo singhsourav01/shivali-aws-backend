@@ -23,7 +23,7 @@ class Bill {
     
   };
 
-  getByorder_Id = async (order_id: string) => {
+  getById = async (order_id: string) => {
     return queryHandler(
       async () => await prisma.order.findUnique({ where: { order_id } })
     );

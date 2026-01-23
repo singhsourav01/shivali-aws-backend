@@ -28,8 +28,8 @@ class OrderController {
   });
 
   getById = asyncHandler(async (req: Request, res: Response) => {
-    // const { id } = req.params;
-    const data = await this.orderService.getById();
+    const { id } = req.params;
+    const data = await this.orderService.getById(id);
 
     return res
       .status(StatusCodes.CREATED)

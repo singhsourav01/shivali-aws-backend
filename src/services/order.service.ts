@@ -19,8 +19,8 @@ class OrderService {
     return bill;
   };
 
-  getById = async () => {
-    const bill = await this.orderRepository.getAll();
+  getById = async (order_id: string) => {
+    const bill = await this.orderRepository.getById(order_id);
     return bill;
   };
   getAll = async () => {
