@@ -24,6 +24,10 @@ orderRouter
   .get(orderController.getByCustomerId);
 
 orderRouter
+  .route(API_ENDPOINTS.ORDER_BY_ID_SPECIAL)
+  .get(orderController.getByIdSpecial);
+
+orderRouter
   .route(API_ENDPOINTS.ORDER_BY_ID)
   .delete(orderController.delete)
   .get(orderController.getById)

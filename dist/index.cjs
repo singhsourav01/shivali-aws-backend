@@ -40895,9 +40895,11 @@ var API_ENDPOINTS = {
   ORDER: "/order",
   TODAY_ORDER: "/today-order",
   RETURN_EXPECTED_ORDERS: "/return-expected",
+  ORDER_BY_ID_SPECIAL: "/order/special/:id",
   ORDER_CUSTOMER: "/order/customer/:id",
   ORDER_BY_ID: "/order/:id",
   ORDER_ITEM: "/order-item",
+  ORDER_ITEM_BY_ORDER_ID: "/order/:order_id",
   ORDER_BY_ID_ITEM: "/order-item/:id",
   CUSTOMER: "/customer",
   CUSTOMER_SEARCH: "/customer-search",
@@ -42042,10 +42044,49 @@ var Bill = class {
       })
     );
   };
-  getByorder_Id = async (order_id) => {
+  getById = async (order_id) => {
     return queryHandler(
       async () => await prisma.order.findUnique({ where: { order_id } })
     );
+  };
+  getByIdSpecial = async (order_id) => {
+    return prisma.order.findUnique({
+      where: { order_id },
+      select: {
+        order_id: true,
+        customer_id: true,
+        availability_status: true,
+        return_expected_by: true,
+        createdAt: true,
+        customer: {
+          select: {
+            customer_id: true,
+            customer_name: true,
+            customer_phone: true,
+            customer_seq: true,
+            customer_address: true
+          }
+        },
+        items: {
+          select: {
+            order_item_id: true,
+            garment_id: true,
+            quantity: true,
+            garment: {
+              select: {
+                garment_name: true,
+                services: {
+                  select: {
+                    service_id: true,
+                    service_name: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
   };
   delete = async (order_id) => {
     return queryHandler(
@@ -42211,16 +42252,20 @@ var OrderService = class {
     this.customerRepository = new customer_repository_default();
   }
   create = async (data) => {
-    const bill = await this.orderRepository.create(data);
-    return bill;
+    const order = await this.orderRepository.create(data);
+    return order;
   };
   update = async (id, data) => {
-    const bill = await this.orderRepository.update(id, data);
-    return bill;
+    const order = await this.orderRepository.update(id, data);
+    return order;
   };
-  getById = async () => {
-    const bill = await this.orderRepository.getAll();
-    return bill;
+  getById = async (order_id) => {
+    const order = await this.orderRepository.getById(order_id);
+    return order;
+  };
+  getByIdSpecial = async (order_id) => {
+    const order = await this.orderRepository.getByIdSpecial(order_id);
+    return order;
   };
   getAll = async () => {
     const orders = await this.orderRepository.getAll();
@@ -42230,12 +42275,12 @@ var OrderService = class {
     const result = orders.map((order, index) => {
       const customer = customers[index];
       return {
+        customer_seq: customer?.customer_seq,
         customer_name: customer?.customer_name,
         customer_id: order.customer_id,
         order_id: order.order_id,
-        quantity: order.quantity,
-        customer_phone: customer?.customer_phone,
         return_expected_by: order.return_expected_by,
+        created_at: order.createdAt,
         availability_status: order.availability_status,
         status: order.status
       };
@@ -42243,8 +42288,8 @@ var OrderService = class {
     return result;
   };
   delete = async (id) => {
-    const bill = await this.orderRepository.delete(id);
-    return bill;
+    const order = await this.orderRepository.delete(id);
+    return order;
   };
   getByCustomerId = async (id) => {
     const orders = await this.orderRepository.getByCustomerId(id);
@@ -42254,13 +42299,11 @@ var OrderService = class {
     const result = orders.map((order, index) => {
       const customer = customers[index];
       return {
+        customer_seq: customer?.customer_seq,
         customer_name: customer?.customer_name,
-        customer_id: order.customer_id,
         order_id: order.order_id,
-        order_created: order.createdAt,
-        customer_phone: customer?.customer_phone,
         return_expected_by: order.return_expected_by,
-        availability_status: order.availability_status,
+        created_at: order.createdAt,
         status: order.status,
         quantity: order.quantity
       };
@@ -42312,8 +42355,8 @@ var OrderService = class {
     });
   };
   getOrderDetails = async (order_id) => {
-    const bill = await this.orderRepository.getOrderDetail(order_id);
-    return bill;
+    const order = await this.orderRepository.getOrderDetail(order_id);
+    return order;
   };
 };
 var order_service_default = OrderService;
@@ -42337,9 +42380,30 @@ var OrderController = class {
     return res.status(StatusCodes.OK).json(new import_common_microservices_utils8.ApiResponse(StatusCodes.OK, order, API_RESPONSES.USER_CREATED));
   });
   getById = (0, import_common_microservices_utils8.asyncHandler)(async (req, res) => {
-    const data = await this.orderService.getById();
+    const { id } = req.params;
+    const data = await this.orderService.getById(id);
     return res.status(StatusCodes.CREATED).json(
       new import_common_microservices_utils8.ApiResponse(StatusCodes.CREATED, data, API_RESPONSES.USER_FETCHED)
+    );
+  });
+  getByIdSpecial = (0, import_common_microservices_utils8.asyncHandler)(async (req, res) => {
+    const { id } = req.params;
+    const data = await this.orderService.getByIdSpecial(id);
+    if (!data) {
+      return res.status(StatusCodes.NOT_FOUND).json(
+        new import_common_microservices_utils8.ApiResponse(
+          StatusCodes.NOT_FOUND,
+          null,
+          "Order not found"
+        )
+      );
+    }
+    return res.status(StatusCodes.OK).json(
+      new import_common_microservices_utils8.ApiResponse(
+        StatusCodes.OK,
+        data,
+        API_RESPONSES.USER_FETCHED
+      )
     );
   });
   delete = (0, import_common_microservices_utils8.asyncHandler)(async (req, res) => {
@@ -42406,6 +42470,7 @@ orderRouter.route(API_ENDPOINTS.ORDER).post(orderController.create).get(orderCon
 orderRouter.route(API_ENDPOINTS.TODAY_ORDER).get(orderController.getTodayOrders);
 orderRouter.route(API_ENDPOINTS.RETURN_EXPECTED_ORDERS).get(orderController.getReturnExpectedOrders);
 orderRouter.route(API_ENDPOINTS.ORDER_CUSTOMER).get(orderController.getByCustomerId);
+orderRouter.route(API_ENDPOINTS.ORDER_BY_ID_SPECIAL).get(orderController.getByIdSpecial);
 orderRouter.route(API_ENDPOINTS.ORDER_BY_ID).delete(orderController.delete).get(orderController.getById).put(orderController.update);
 var order_route_default = orderRouter;
 
@@ -42435,7 +42500,10 @@ var OrderItems = class {
   };
   getByOrderId = async (order_id) => {
     return queryHandler(
-      async () => await prisma.orderItem.findFirst({ where: { order_id } })
+      async () => await prisma.orderItem.findMany({
+        where: { order_id },
+        orderBy: { createdAt: "asc" }
+      })
     );
   };
   delete = async (order_item_id) => {
@@ -42532,6 +42600,17 @@ var UserController5 = class {
       new import_common_microservices_utils9.ApiResponse(StatusCodes.OK, result, API_RESPONSES.USERS_FETCHED)
     );
   });
+  getByOrderId = (0, import_common_microservices_utils9.asyncHandler)(async (req, res) => {
+    const { order_id } = req.params;
+    const data = await this.orderItemService.getByOrderId(order_id);
+    return res.status(StatusCodes.OK).json(
+      new import_common_microservices_utils9.ApiResponse(
+        StatusCodes.OK,
+        data,
+        API_RESPONSES.USER_FETCHED
+      )
+    );
+  });
 };
 var orderItems_controllers_default = UserController5;
 
@@ -42539,6 +42618,7 @@ var orderItems_controllers_default = UserController5;
 var orderItemRouter = import_express6.default.Router();
 var orderItemController = new orderItems_controllers_default();
 orderItemRouter.route(API_ENDPOINTS.ORDER_ITEM).post(orderItemController.create).get(orderItemController.get).put(orderItemController.update);
+orderItemRouter.route(API_ENDPOINTS.ORDER_ITEM_BY_ORDER_ID).get(orderItemController.getByOrderId);
 orderItemRouter.route(API_ENDPOINTS.ORDER_BY_ID_ITEM).get(orderItemController.getById).delete(orderItemController.delete);
 var orderItems_route_default = orderItemRouter;
 

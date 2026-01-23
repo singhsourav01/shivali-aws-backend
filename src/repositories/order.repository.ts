@@ -28,6 +28,50 @@ class Bill {
       async () => await prisma.order.findUnique({ where: { order_id } })
     );
   };
+getByIdSpecial = async (order_id: string) => {
+  return prisma.order.findUnique({
+    where: { order_id },
+    select: {
+      order_id: true,
+      customer_id: true,
+      availability_status: true,
+      return_expected_by: true,
+      createdAt: true,
+
+      customer: {
+        select: {
+          customer_id: true,
+          customer_name: true,
+          customer_phone: true,
+          customer_seq: true,
+          customer_address: true,
+        },
+      },
+
+      items: {
+        select: {
+          order_item_id: true,
+          garment_id: true,
+          quantity: true,
+
+          garment: {
+            select: {
+              garment_name: true,
+              services: {
+                select: {
+                  service_id: true,
+                  service_name: true,
+              }
+            },
+          },
+
+        },
+      },
+    },
+  },
+  });
+};
+
 
   delete = async (order_id: string) => {
     return queryHandler(

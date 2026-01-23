@@ -37,6 +37,35 @@ class OrderController {
         new ApiResponse(StatusCodes.CREATED, data, API_RESPONSES.USER_FETCHED)
       );
   });
+  
+getByIdSpecial = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const data = await this.orderService.getByIdSpecial(id);
+
+  if (!data) {
+    return res
+      .status(StatusCodes.NOT_FOUND)
+      .json(
+        new ApiResponse(
+          StatusCodes.NOT_FOUND,
+          null,
+          "Order not found"
+        )
+      );
+  }
+
+  return res
+    .status(StatusCodes.OK) 
+    .json(
+      new ApiResponse(
+        StatusCodes.OK,
+        data,
+        API_RESPONSES.USER_FETCHED
+      )
+    );
+});
+
   delete = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     await this.orderService.delete(id || "");

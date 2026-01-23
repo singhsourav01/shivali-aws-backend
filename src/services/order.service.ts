@@ -11,17 +11,22 @@ class OrderService {
   }
 
   create = async (data: any) => {
-    const bill = await this.orderRepository.create(data);
-    return bill;
+    const order = await this.orderRepository.create(data);
+    return order;
   };
   update = async (id: string, data: any) => {
-    const bill = await this.orderRepository.update(id, data);
-    return bill;
+    const order = await this.orderRepository.update(id, data);
+    return order;
   };
 
   getById = async (order_id: string) => {
-    const bill = await this.orderRepository.getById(order_id);
-    return bill;
+    const order = await this.orderRepository.getById(order_id);
+    return order;
+  };
+
+   getByIdSpecial = async (order_id: string) => {
+    const order = await this.orderRepository.getByIdSpecial(order_id);
+    return order;
   };
   getAll = async () => {
     const orders = await this.orderRepository.getAll();
@@ -30,27 +35,25 @@ class OrderService {
       orders.map((item: any) => this.customerRepository.getById(item.customer_id))
     );
 
-    // Merge and select only required fields
     const result = orders.map((order: any, index: any) => {
       const customer = customers[index];
       return {
+        customer_seq: customer?.customer_seq,
         customer_name: customer?.customer_name,
         customer_id: order.customer_id,
         order_id: order.order_id,
-        quantity: order.quantity,
-        customer_phone: customer?.customer_phone,
         return_expected_by: order.return_expected_by,
+        created_at: order.createdAt,
         availability_status: order.availability_status,
         status: order.status,
       };
     });
-
     return result;
   };
 
   delete = async (id: string) => {
-    const bill = await this.orderRepository.delete(id);
-    return bill;
+    const order = await this.orderRepository.delete(id);
+    return order;
   };
 
   getByCustomerId = async (id: string) => {
@@ -59,17 +62,14 @@ class OrderService {
       orders.map((item: any) => this.customerRepository.getById(item.customer_id))
     );
 
-    // Merge and select only required fields
     const result = orders.map((order: any, index: any) => {
       const customer = customers[index];
       return {
+        customer_seq: customer?.customer_seq,
         customer_name: customer?.customer_name,
-        customer_id: order.customer_id,
         order_id: order.order_id,
-        order_created: order.createdAt,
-        customer_phone: customer?.customer_phone,
         return_expected_by: order.return_expected_by,
-        availability_status: order.availability_status,
+        created_at: order.createdAt,
         status: order.status,
         quantity: order.quantity,
       };
@@ -133,8 +133,8 @@ getOrdersByReturnExpectedDate = async (date: any) => {
 
 
   getOrderDetails = async (order_id: string) => {
-    const bill = await this.orderRepository.getOrderDetail(order_id);
-    return bill;
+    const order = await this.orderRepository.getOrderDetail(order_id);
+    return order;
   };
 }
 
