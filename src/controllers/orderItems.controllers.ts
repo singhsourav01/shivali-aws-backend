@@ -73,6 +73,23 @@ class UserController {
         new ApiResponse(StatusCodes.OK, result, API_RESPONSES.USERS_FETCHED)
       );
   });
+
+  getByOrderId = asyncHandler(async (req: Request, res: Response) => {
+  const { order_id } = req.params;
+
+  const data = await this.orderItemService.getByOrderId(order_id);
+
+  return res
+    .status(StatusCodes.OK)
+    .json(
+      new ApiResponse(
+        StatusCodes.OK,
+        data,
+        API_RESPONSES.USER_FETCHED
+      )
+    );
+});
+
 }
 
 export default UserController;

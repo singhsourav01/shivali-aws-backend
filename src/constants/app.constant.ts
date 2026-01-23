@@ -17,6 +17,7 @@ export const API_ENDPOINTS = {
   ORDER_CUSTOMER: "/order/customer/:id",
   ORDER_BY_ID: "/order/:id",
   ORDER_ITEM: "/order-item",
+  ORDER_ITEM_BY_ORDER_ID: "/order/:order_id",
   ORDER_BY_ID_ITEM: "/order-item/:id",
   CUSTOMER: "/customer",
   CUSTOMER_SEARCH: "/customer-search",

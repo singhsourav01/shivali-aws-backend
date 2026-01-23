@@ -13,6 +13,10 @@ orderItemRouter
   .put(orderItemController.update);
 
 orderItemRouter
+  .route(API_ENDPOINTS.ORDER_ITEM_BY_ORDER_ID)
+  .get(orderItemController.getByOrderId);
+
+orderItemRouter
   .route(API_ENDPOINTS.ORDER_BY_ID_ITEM)
   .get(orderItemController.getById)
   .delete(orderItemController.delete);
